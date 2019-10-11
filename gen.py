@@ -281,8 +281,14 @@ def generate_ims():
         yield generate_im(font_char_ims[random.choice(fonts)], num_bg_images)
 
 
+def set_seed(seed):
+    random.seed(seed)
+    numpy.random.seed(seed)
+
 if __name__ == "__main__":
     os.mkdir("test")
+    seed = int(sys.argv[2])
+    set_seed(seed)
     im_gen = itertools.islice(generate_ims(), int(sys.argv[1]))
     for img_idx, (im, c, p) in enumerate(im_gen):
         fname = "test/{:08d}_{}_{}.png".format(img_idx, c,

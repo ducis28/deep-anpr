@@ -2,3 +2,12 @@
 
 $ curl -RLO http://vision.princeton.edu/projects/2010/SUN/SUN397.tar.gz
 
+$ curl -RL https://dl.dafont.com/dl/?f=uk_number_plate -o uk_number_plate.zip
+$ unzip uk_number_plate.zip
+$ mkdir fonts
+$ mv UKNumberPlate.ttf fonts
+
+
+$ python extractbgs.py SUN397.tar.gz
+$ python gen.py 1000 1234567
+
