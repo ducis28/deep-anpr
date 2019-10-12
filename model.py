@@ -42,7 +42,7 @@ WINDOW_SHAPE = (64, 128)
 
 # Utility functions
 def weight_variable(shape):
-  initial = tf.truncated_normal(shape, stddev=0.1)
+  initial = tf.random.truncated_normal(shape, stddev=0.1)
   return tf.Variable(initial)
 
 
@@ -57,8 +57,8 @@ def conv2d(x, W, stride=(1, 1), padding='SAME'):
 
 
 def max_pool(x, ksize=(2, 2), stride=(2, 2)):
-  return tf.nn.max_pool(x, ksize=[1, ksize[0], ksize[1], 1],
-                        strides=[1, stride[0], stride[1], 1], padding='SAME')
+  return tf.nn.max_pool2d(x, ksize=[1, ksize[0], ksize[1], 1],
+                          strides=[1, stride[0], stride[1], 1], padding='SAME')
 
 
 def avg_pool(x, ksize=(2, 2), stride=(2, 2)):
@@ -71,7 +71,7 @@ def convolutional_layers():
     Get the convolutional layers of the model.
 
     """
-    x = tf.placeholder(tf.float32, [None, None, None])
+    x = tf.compat.v1.placeholder(tf.float32, [None, None, None])
 
     # First layer
     W_conv1 = weight_variable([5, 5, 1, 48])

@@ -125,9 +125,11 @@ def read_batches(batch_size):
 def get_loss(y, y_):
     # Calculate the loss from digits being incorrect.  Don't count loss from
     # digits that are in non-present plates.
-    digits_loss = tf.nn.softmax_cross_entropy_with_logits(
+    digits_loss = tf.nn.softmax_cross_entropy_with_logits_v2(
+                                          logits=
                                           tf.reshape(y[:, 1:],
                                                      [-1, len(common.CHARS)]),
+                                          labels=
                                           tf.reshape(y_[:, 1:],
                                                      [-1, len(common.CHARS)]))
     digits_loss = tf.reshape(digits_loss, [-1, 7])
@@ -137,7 +139,7 @@ def get_loss(y, y_):
 
     # Calculate the loss from presence indicator being wrong.
     presence_loss = tf.nn.sigmoid_cross_entropy_with_logits(
-                                                          y[:, :1], y_[:, :1])
+                                                          logits=y[:, :1], labels=y_[:, :1])
     presence_loss = 7 * tf.reduce_sum(presence_loss)
 
     return digits_loss, presence_loss, digits_loss + presence_loss
@@ -169,10 +171,10 @@ def train(learn_rate, report_steps, batch_size, initial_weights=None):
     """
     x, y, params = model.get_training_model()
 
-    y_ = tf.placeholder(tf.float32, [None, 7 * len(common.CHARS) + 1])
+    y_ = tf.compat.v1.placeholder(tf.float32, [None, 7 * len(common.CHARS) + 1])
 
     digits_loss, presence_loss, loss = get_loss(y, y_)
-    train_step = tf.train.AdamOptimizer(learn_rate).minimize(loss)
+    train_step = tf.compat.v1.train.AdamOptimizer(learn_rate).minimize(loss)
 
     best = tf.argmax(tf.reshape(y[:, 1:], [-1, 7, len(common.CHARS)]), 2)
     correct = tf.argmax(tf.reshape(y_[:, 1:], [-1, 7, len(common.CHARS)]), 2)
@@ -223,8 +225,8 @@ def train(learn_rate, report_steps, batch_size, initial_weights=None):
         if batch_idx % report_steps == 0:
             do_report()
 
-    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.95)
-    with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
+    gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.95)
+    with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)) as sess:
         sess.run(init)
         if initial_weights is not None:
             sess.run(assign_ops)
